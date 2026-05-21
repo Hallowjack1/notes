@@ -6,6 +6,7 @@ import DeleteAccountModal from "../components/DeleteAccountModal";
 import TrashModal from "../components/TrashModal";
 import FolderSidebar from "../components/FolderSidebar";
 import useReminders from "../hooks/useReminders";
+import ExportModal from "../components/ExportModal";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
@@ -26,6 +27,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const NOTES_PER_PAGE = 12;
+  const [showExport, setShowExport] = useState(false);
 
   const fetchNotes = async () => {
     const res = await fetch(`http://localhost/notes/backend/api/notes.php?user_id=${userId}`);
@@ -221,6 +223,14 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
           onRestored={fetchNotes}
         />
       )}
+
+    {/* Export modal */}
+    {showExport && (
+      <ExportModal
+        notes={filteredNotes}
+        onClose={() => setShowExport(false)}
+      />
+    )}
       
       <div className="app-layout">
         {/* LEFT PANEL */}
@@ -270,6 +280,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
         {/* RIGHT PANEL */}
         <div className="right-panel">
           <div className="top-bar">
+  
             <h2>
               {activeFolderId
                 ? folders.find((f) => f.id == activeFolderId)?.name
@@ -283,6 +294,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
               <DarkToggle isDark={isDark} onToggle={onToggleDark} />
               <a onClick={() => setShowChangePassword(true)}>Settings</a>
               <a onClick={() => setShowTrash(true)}>Trash</a>
+              <a onClick={() => setShowExport(true)}>Export</a>
               <a onClick={() => setShowDeleteAccount(true)} style={{ color: "#e74c3c" }}>Delete account</a>
               <a onClick={onLogout}>Logout</a>
             </div>
