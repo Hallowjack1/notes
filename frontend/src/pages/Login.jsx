@@ -1,6 +1,7 @@
 import { useState } from "react";
+import DarkToggle from "../components/DarkToggle";
 
-function Login({ onLogin, goToRegister }) {
+function Login({ onLogin, goToRegister, isDark, onToggleDark }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,7 +27,10 @@ function Login({ onLogin, goToRegister }) {
 
   return (
     <div className="auth-container">
-      <h2>Login</h2>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2>Login</h2>
+        <DarkToggle isDark={isDark} onToggle={onToggleDark} />
+      </div>        
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <input placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import EditModal from "../components/EditModal";
+import DarkToggle from "../components/DarkToggle";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
-function Notes({ userId, username, onLogout }) {
+function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   const [notes, setNotes] = useState([]);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -63,7 +64,12 @@ function Notes({ userId, username, onLogout }) {
   };
 
   const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    return new Date(dateStr).toLocaleDateString("en-US", { 
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
   };
 
   const filteredNotes = notes.filter((note) => {
@@ -83,14 +89,25 @@ function Notes({ userId, username, onLogout }) {
           onClose={() => setEditingNote(null)}
         />
       )}
-
+      
       <div className="app-layout">
         <div className="left-panel">
           <h3>New note</h3>
           {error && <p className="error">{error}</p>}
           <form onSubmit={handleAdd} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-            <textarea placeholder="Write your note..." rows="5" value={body} onChange={(e) => setBody(e.target.value)} required />
+            <textarea
+              placeholder="Write your note..."
+              rows="5"
+              value={body}
+              onChange={(e) => {
+                if (e.target.value.length <= 500) setBody(e.target.value);
+              }}
+              required
+            />
+            <div style={{ fontSize: "12px", textAlign: "right", color: body.length > 450 ? "#e74c3c" : "#aaa" }}>
+              {body.length}/500
+            </div>
             <select value={tag} onChange={(e) => setTag(e.target.value)}>
               <option value="">No tag</option>
               {TAGS.map((t) => <option key={t} value={t}>{t}</option>)}
@@ -102,7 +119,10 @@ function Notes({ userId, username, onLogout }) {
         <div className="right-panel">
           <div className="top-bar">
             <h2>My Notes</h2>
-            <a onClick={onLogout}>Logout</a>
+            <div className="top-bar-right">
+              <DarkToggle isDark={isDark} onToggle={onToggleDark} />
+              <a onClick={onLogout}>Logout</a>
+            </div>
           </div>
 
           <input placeholder="Search notes..." value={search} onChange={(e) => setSearch(e.target.value)} />
