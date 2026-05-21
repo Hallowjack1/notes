@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import EditModal from "../components/EditModal";
 import DarkToggle from "../components/DarkToggle";
+import ChangePasswordModal from "../components/ChangePasswordModal";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
 function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   const [notes, setNotes] = useState([]);
+  const [showChangePassword, setShowChangePassword] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [tag, setTag] = useState("");
@@ -98,6 +100,13 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
           onClose={() => setEditingNote(null)}
         />
       )}
+
+      {showChangePassword && (
+        <ChangePasswordModal
+          userId={userId}
+          onClose={() => setShowChangePassword(false)}
+        />
+      )}
       
       <div className="app-layout">
         <div className="left-panel">
@@ -130,6 +139,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
             <h2>My Notes</h2>
             <div className="top-bar-right">
               <DarkToggle isDark={isDark} onToggle={onToggleDark} />
+              <a onClick={() => setShowChangePassword(true)}>Settings</a>
               <a onClick={onLogout}>Logout</a>
             </div>
           </div>
