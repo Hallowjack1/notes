@@ -22,6 +22,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   const [showTrash, setShowTrash] = useState(false);
   const [folders, setFolders] = useState([]);
   const [activeFolderId, setActiveFolderId] = useState(null);
+  const [activeCategory, setActiveCategory] = useState("all");
 
   const fetchNotes = async () => {
     const res = await fetch(`http://localhost/notes/backend/api/notes.php?user_id=${userId}`);
@@ -144,14 +145,30 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     });
   };
 
-  const filteredNotes = notes.filter((note) => {
-    const matchesSearch =
-      note.title.toLowerCase().includes(search.toLowerCase()) ||
-      note.body.toLowerCase().includes(search.toLowerCase());
-    const matchesTag = filterTag === "" || note.tag === filterTag;
-    const matchesFolder = activeFolderId === null || note.folder_id == activeFolderId;
-    return matchesSearch && matchesTag && matchesFolder;
-  });
+const filteredNotes = notes.filter((note) => {
+  const matchesSearch =
+    note.title.toLowerCase().includes(search.toLowerCase()) ||
+    note.body.toLowerCase().includes(search.toLowerCase());
+
+  const matchesFolder = activeFolderId === null || note.folder_id == activeFolderId;
+
+  const matchesCategory =
+    activeCategory === "all" ||
+    (activeCategory === "pinned" && note.pinned == 1) ||
+    note.tag === activeCategory;
+
+  return matchesSearch && matchesFolder && matchesCategory;
+});
+
+  const handleSelectCategory = (category) => {
+    setActiveCategory(category);
+    setActiveFolderId(null);
+  };
+
+  const handleSelectFolder = (folderId) => {
+    setActiveFolderId(folderId);
+    setActiveCategory("all");
+  };
 
   return (
     <>
@@ -226,7 +243,10 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
           <FolderSidebar
             folders={folders}
             activeFolderId={activeFolderId}
-            onSelectFolder={setActiveFolderId}
+            activeCategory={activeCategory}
+            notes={notes}
+            onSelectFolder={handleSelectFolder}
+            onSelectCategory={handleSelectCategory}
             onCreateFolder={handleCreateFolder}
             onRenameFolder={handleRenameFolder}
             onDeleteFolder={handleDeleteFolder}
@@ -236,7 +256,15 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
         {/* RIGHT PANEL */}
         <div className="right-panel">
           <div className="top-bar">
-            <h2>{activeFolderId ? folders.find(f => f.id == activeFolderId)?.name : "My Notes"}</h2>
+            <h2>
+              {activeFolderId
+                ? folders.find((f) => f.id == activeFolderId)?.name
+                : activeCategory === "all"
+                ? "My Notes"
+                : activeCategory === "pinned"
+                ? "Pinned"
+                : activeCategory}
+            </h2>            
             <div className="top-bar-right">
               <DarkToggle isDark={isDark} onToggle={onToggleDark} />
               <a onClick={() => setShowChangePassword(true)}>Settings</a>
@@ -247,13 +275,6 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
           </div>
 
           <input placeholder="Search notes..." value={search} onChange={(e) => setSearch(e.target.value)} />
-
-          <div className="tag-filter">
-            <button className={filterTag === "" ? "tag-btn active" : "tag-btn"} onClick={() => setFilterTag("")}>All</button>
-            {TAGS.map((t) => (
-              <button key={t} className={filterTag === t ? "tag-btn active" : "tag-btn"} onClick={() => setFilterTag(t)}>{t}</button>
-            ))}
-          </div>
 
           {filteredNotes.length === 0 ? (
             <p style={{ fontSize: "14px", color: "var(--text-muted)" }}>

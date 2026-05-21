@@ -1,6 +1,18 @@
 import { useState } from "react";
 
-function FolderSidebar({ folders, activeFolderId, onSelectFolder, onCreateFolder, onRenameFolder, onDeleteFolder }) {
+const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
+
+function FolderSidebar({
+  folders,
+  activeFolderId,
+  activeCategory,
+  notes,
+  onSelectFolder,
+  onSelectCategory,
+  onCreateFolder,
+  onRenameFolder,
+  onDeleteFolder,
+}) {
   const [newFolderName, setNewFolderName] = useState("");
   const [renamingId, setRenamingId] = useState(null);
   const [renameValue, setRenameValue] = useState("");
@@ -20,8 +32,53 @@ function FolderSidebar({ folders, activeFolderId, onSelectFolder, onCreateFolder
     setRenameValue("");
   };
 
+  const pinnedCount = notes.filter((n) => n.pinned == 1).length;
+  const tagCounts = TAGS.reduce((acc, tag) => {
+    const count = notes.filter((n) => n.tag === tag).length;
+    if (count > 0) acc[tag] = count;
+    return acc;
+  }, {});
+
   return (
     <div className="folder-sidebar">
+
+      {/* CATEGORIES */}
+      <div className="folder-header" style={{ marginTop: "4px" }}>
+        <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-primary)" }}>Categories</span>
+      </div>
+
+      <div
+        className={`folder-item ${activeCategory === "all" ? "active" : ""}`}
+        onClick={() => onSelectCategory("all")}
+      >
+        <span>📋 All notes</span>
+        <span className="folder-count">{notes.length}</span>
+      </div>
+
+      {pinnedCount > 0 && (
+        <div
+          className={`folder-item ${activeCategory === "pinned" ? "active" : ""}`}
+          onClick={() => onSelectCategory("pinned")}
+        >
+          <span>📌 Pinned</span>
+          <span className="folder-count">{pinnedCount}</span>
+        </div>
+      )}
+
+      {Object.entries(tagCounts).map(([tag, count]) => (
+        <div
+          key={tag}
+          className={`folder-item ${activeCategory === tag ? "active" : ""}`}
+          onClick={() => onSelectCategory(tag)}
+        >
+          <span>🏷️ {tag}</span>
+          <span className="folder-count">{count}</span>
+        </div>
+      ))}
+
+      <hr style={{ borderColor: "var(--border)", margin: "8px 0" }} />
+
+      {/* FOLDERS */}
       <div className="folder-header">
         <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-primary)" }}>Folders</span>
         <button className="folder-add-btn" onClick={() => setShowInput(!showInput)} title="New folder">+</button>
@@ -41,15 +98,15 @@ function FolderSidebar({ folders, activeFolderId, onSelectFolder, onCreateFolder
         </div>
       )}
 
-      <div
-        className={`folder-item ${activeFolderId === null ? "active" : ""}`}
-        onClick={() => onSelectFolder(null)}
-      >
-        📋 All notes
-      </div>
+      {folders.length === 0 && (
+        <p style={{ fontSize: "12px", color: "var(--text-muted)", padding: "4px 10px" }}>No folders yet.</p>
+      )}
 
       {folders.map((folder) => (
-        <div key={folder.id} className={`folder-item ${activeFolderId === folder.id ? "active" : ""}`}>
+        <div
+          key={folder.id}
+          className={`folder-item ${activeFolderId === folder.id ? "active" : ""}`}
+        >
           {renamingId === folder.id ? (
             <div className="folder-input-row" onClick={(e) => e.stopPropagation()}>
               <input
