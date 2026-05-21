@@ -9,7 +9,7 @@ require '../db.php';
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $user_id = $_GET['user_id'] ?? '';
 
-    $stmt = $pdo->prepare("SELECT * FROM notes WHERE user_id = ? ORDER BY pinned DESC, created_at DESC");
+    $stmt = $pdo->prepare("SELECT * FROM notes WHERE user_id = ? AND deleted_at IS NULL ORDER BY pinned DESC, created_at DESC");
     $stmt->execute([$user_id]);
     $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

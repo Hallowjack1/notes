@@ -3,6 +3,7 @@ import EditModal from "../components/EditModal";
 import DarkToggle from "../components/DarkToggle";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import DeleteAccountModal from "../components/DeleteAccountModal";
+import TrashModal from "../components/TrashModal";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
@@ -17,6 +18,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   const [filterTag, setFilterTag] = useState("");
   const [editingNote, setEditingNote] = useState(null);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [showTrash, setShowTrash] = useState(false);
 
   const fetchNotes = async () => {
     const res = await fetch(`http://localhost/notes/backend/api/notes.php?user_id=${userId}`);
@@ -120,6 +122,15 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
           onClose={() => setShowDeleteAccount(false)}
         />
       )}
+
+    {/* Trash modal */}
+      {showTrash && (
+        <TrashModal 
+          userId={userId} 
+          onClose={() => setShowTrash(false)} 
+          onRestored={fetchNotes}
+        />
+      )}
       
       <div className="app-layout">
         <div className="left-panel">
@@ -153,6 +164,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
             <div className="top-bar-right">
               <DarkToggle isDark={isDark} onToggle={onToggleDark} />
               <a onClick={() => setShowChangePassword(true)}>Settings</a>
+              <a onClick={() => setShowTrash(true)}>Trash</a>
               <a onClick={() => setShowDeleteAccount(true)} style={{ color: "#e74c3c" }}>Delete account</a>
               <a onClick={onLogout}>Logout</a>
             </div>
