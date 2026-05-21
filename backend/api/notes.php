@@ -24,13 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($data['title'] ?? '');
     $body = trim($data['body'] ?? '');
     $tag = trim($data['tag'] ?? '');
+    $folder_id = $data['folder_id'] ?? null;
 
     if ($title === '' || $body === '') {
         echo json_encode(['success' => false, 'message' => 'All fields are required.']);
         exit;
     }
 
-    $stmt = $pdo->prepare("INSERT INTO notes (user_id, title, body, tag) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$user_id, $title, $body, $tag ?: null]);
+    $stmt = $pdo->prepare("INSERT INTO notes (user_id, title, body, tag, folder_id) VALUES (?, ?, ?, ?, ?)");
+    $stmt->execute([$user_id, $title, $body, $tag ?: null, $folder_id ?: null]);
     echo json_encode(['success' => true]);
 }

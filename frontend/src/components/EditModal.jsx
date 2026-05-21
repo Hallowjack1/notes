@@ -2,14 +2,15 @@ import { useState } from "react";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
-function EditModal({ note, onSave, onClose }) {
+function EditModal({ note, folders, onSave, onClose }) {
   const [editTitle, setEditTitle] = useState(note.title);
   const [editBody, setEditBody] = useState(note.body);
   const [editTag, setEditTag] = useState(note.tag || "");
+  const [editFolderId, setEditFolderId] = useState(note.folder_id || "");
 
   const handleSave = () => {
     if (editTitle.trim() === "" || editBody.trim() === "") return;
-    onSave(note.id, editTitle, editBody, editTag);
+    onSave(note.id, editTitle, editBody, editTag, editFolderId);
   };
 
   const handleOverlayClick = (e) => {
@@ -39,6 +40,10 @@ function EditModal({ note, onSave, onClose }) {
           <select value={editTag} onChange={(e) => setEditTag(e.target.value)}>
             <option value="">No tag</option>
             {TAGS.map((t) => <option key={t} value={t}>{t}</option>)}
+          </select>
+          <select value={editFolderId} onChange={(e) => setEditFolderId(e.target.value)}>
+            <option value="">No folder</option>
+            {folders.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
           </select>
         </div>
 

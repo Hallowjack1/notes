@@ -12,13 +12,14 @@ $user_id = $data['user_id'] ?? '';
 $title = trim($data['title'] ?? '');
 $body = trim($data['body'] ?? '');
 $tag = trim($data['tag'] ?? '');
+$folder_id = $data['folder_id'] ?? null;
 
 if ($title === '' || $body === '') {
     echo json_encode(['success' => false, 'message' => 'All fields are required.']);
     exit;
 }
 
-$stmt = $pdo->prepare("UPDATE notes SET title = ?, body = ?, tag = ? WHERE id = ? AND user_id = ?");
-$stmt->execute([$title, $body, $tag ?: null, $id, $user_id]);
+$stmt = $pdo->prepare("UPDATE notes SET title = ?, body = ?, tag = ?, folder_id = ? WHERE id = ? AND user_id = ?");
+$stmt->execute([$title, $body, $tag ?: null, $folder_id ?: null, $id, $user_id]);
 
 echo json_encode(['success' => true]);

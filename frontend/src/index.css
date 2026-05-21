@@ -494,3 +494,90 @@ button:hover {
     line-clamp: unset;
     overflow: visible;
 }
+
+.folder-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.folder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.folder-add-btn {
+    background: none;
+    border: 0.5px solid var(--border);
+    color: var(--text-secondary);
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.folder-add-btn:hover {
+    border-color: #4a90e2;
+    color: #4a90e2;
+    background: none;
+}
+
+.folder-item {
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.folder-item:hover {
+    background: var(--bg-card);
+}
+
+.folder-item.active {
+    background: var(--bg-card);
+    color: #4a90e2;
+    font-weight: 600;
+}
+
+.folder-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.folder-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.folder-item:hover .folder-actions {
+    opacity: 1;
+}
+
+.folder-action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px;
+    width: auto;
+}
+
+.folder-input-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 4px;
+}

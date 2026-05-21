@@ -4,6 +4,7 @@ import DarkToggle from "../components/DarkToggle";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import DeleteAccountModal from "../components/DeleteAccountModal";
 import TrashModal from "../components/TrashModal";
+import FolderSidebar from "../components/FolderSidebar";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
@@ -19,6 +20,8 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   const [editingNote, setEditingNote] = useState(null);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [showTrash, setShowTrash] = useState(false);
+  const [folders, setFolders] = useState([]);
+  const [activeFolderId, setActiveFolderId] = useState(null);
 
   const fetchNotes = async () => {
     const res = await fetch(`http://localhost/notes/backend/api/notes.php?user_id=${userId}`);
@@ -26,7 +29,16 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     setNotes(data);
   };
 
-  useEffect(() => { fetchNotes(); }, []);
+  const fetchFolders = async () => {
+    const res = await fetch(`http://localhost/notes/backend/api/folders.php?user_id=${userId}`);
+    const data = await res.json();
+    setFolders(data);
+  };
+
+    useEffect(() => {
+      fetchNotes();
+      fetchFolders();
+    }, []);
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -34,7 +46,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     const res = await fetch("http://localhost/notes/backend/api/notes.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id: userId, title, body, tag }),
+      body: JSON.stringify({ user_id: userId, title, body, tag, folder_id: activeFolderId }),
     });
     const data = await res.json();
     if (data.success) {
@@ -65,17 +77,62 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     fetchNotes();
   };
 
-  const handleEditSave = async (id, editTitle, editBody, editTag) => {
+  const handleEditSave = async (id, editTitle, editBody, editTag, editFolderId) => {
     const res = await fetch("http://localhost/notes/backend/api/update.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, user_id: userId, title: editTitle, body: editBody, tag: editTag }),
+      body: JSON.stringify({
+        id,
+        user_id: userId,
+        title: editTitle,
+        body: editBody,
+        tag: editTag,
+        folder_id: editFolderId,
+      }),
     });
     const data = await res.json();
     if (data.success) {
       setEditingNote(null);
       fetchNotes();
     }
+  };
+
+  const handleCreateFolder = async (name) => {
+    await fetch("http://localhost/notes/backend/api/folders.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "create", user_id: userId, name }),
+    });
+    fetchFolders();
+  };
+
+  const handleRenameFolder = async (id, name) => {
+    await fetch("http://localhost/notes/backend/api/folders.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "rename", user_id: userId, id, name }),
+    });
+    fetchFolders();
+  };
+
+  const handleDeleteFolder = async (id) => {
+    await fetch("http://localhost/notes/backend/api/folders.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "delete", user_id: userId, id }),
+    });
+    if (activeFolderId === id) setActiveFolderId(null);
+    fetchFolders();
+    fetchNotes();
+  };
+
+  const handleMoveNote = async (noteId, folderId) => {
+    await fetch("http://localhost/notes/backend/api/move-note.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: noteId, user_id: userId, folder_id: folderId }),
+    });
+    fetchNotes();
   };
 
   const formatDate = (dateStr) => {
@@ -92,7 +149,8 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
       note.title.toLowerCase().includes(search.toLowerCase()) ||
       note.body.toLowerCase().includes(search.toLowerCase());
     const matchesTag = filterTag === "" || note.tag === filterTag;
-    return matchesSearch && matchesTag;
+    const matchesFolder = activeFolderId === null || note.folder_id == activeFolderId;
+    return matchesSearch && matchesTag && matchesFolder;
   });
 
   return (
@@ -102,6 +160,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
       {editingNote && (
         <EditModal
           note={editingNote}
+          folders={folders}
           onSave={handleEditSave}
           onClose={() => setEditingNote(null)}
         />
@@ -133,6 +192,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
       )}
       
       <div className="app-layout">
+        {/* LEFT PANEL */}
         <div className="left-panel">
           <h3>New note</h3>
           {error && <p className="error">{error}</p>}
@@ -147,20 +207,36 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
               }}
               required
             />
-            <div style={{ fontSize: "12px", textAlign: "right", color: body.length > 450 ? "#e74c3c" : "#aaa" }}>
+            <div style={{ fontSize: "12px", textAlign: "right", color: body.length > 450 ? "#e74c3c" : "var(--text-muted)" }}>
               {body.length}/500
             </div>
             <select value={tag} onChange={(e) => setTag(e.target.value)}>
               <option value="">No tag</option>
               {TAGS.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
+            <select value={activeFolderId || ""} onChange={(e) => setActiveFolderId(e.target.value || null)}>
+              <option value="">No folder</option>
+              {folders.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+            </select>
             <button type="submit">Add Note</button>
           </form>
+
+          <hr style={{ borderColor: "var(--border)" }} />
+
+          <FolderSidebar
+            folders={folders}
+            activeFolderId={activeFolderId}
+            onSelectFolder={setActiveFolderId}
+            onCreateFolder={handleCreateFolder}
+            onRenameFolder={handleRenameFolder}
+            onDeleteFolder={handleDeleteFolder}
+          />
         </div>
 
+        {/* RIGHT PANEL */}
         <div className="right-panel">
           <div className="top-bar">
-            <h2>My Notes</h2>
+            <h2>{activeFolderId ? folders.find(f => f.id == activeFolderId)?.name : "My Notes"}</h2>
             <div className="top-bar-right">
               <DarkToggle isDark={isDark} onToggle={onToggleDark} />
               <a onClick={() => setShowChangePassword(true)}>Settings</a>
@@ -180,7 +256,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
           </div>
 
           {filteredNotes.length === 0 ? (
-            <p style={{ fontSize: "14px", color: "#aaa" }}>
+            <p style={{ fontSize: "14px", color: "var(--text-muted)" }}>
               {search || filterTag ? "No notes match your filter." : "No notes yet. Add one on the left!"}
             </p>
           ) : (
@@ -189,16 +265,17 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
                 <div className="note-card" key={note.id} style={{ border: note.pinned == 1 ? "0.5px solid #4a90e2" : "" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     {note.tag && <span className="tag-badge">{note.tag}</span>}
-                    <button
-                      className="pin-btn"
-                      onClick={() => handlePin(note.id, note.pinned)}
-                      title={note.pinned ? "Unpin" : "Pin"}
-                    >
+                    <button className="pin-btn" onClick={() => handlePin(note.id, note.pinned)} title={note.pinned ? "Unpin" : "Pin"}>
                       {note.pinned == 1 ? "📌" : "📍"}
                     </button>
                   </div>
                   <h4>{note.title}</h4>
                   <p>{note.body}</p>
+                  {note.folder_id && (
+                    <small style={{ color: "var(--text-muted)" }}>
+                      📁 {folders.find(f => f.id == note.folder_id)?.name}
+                    </small>
+                  )}
                   <div className="note-footer">
                     <small>{formatDate(note.created_at)}</small>
                     <div className="note-actions">
