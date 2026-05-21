@@ -1,0 +1,366 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    min-height: 100vh;
+    padding: 24px;
+}
+
+.app-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* LEFT PANEL */
+.left-panel {
+    background: #fff;
+    border-radius: 12px;
+    border: 0.5px solid #e0e0e0;
+    padding: 20px;
+    height: fit-content;
+    position: sticky;
+    top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.left-panel h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-bar h2 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.top-bar a {
+    color: #e74c3c;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.top-bar a:hover {
+    text-decoration: underline;
+}
+
+/* NOTES GRID */
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+}
+
+.note-card {
+    background: #fff;
+    border: 0.5px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.note-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.note-card p {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.note-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 0.5px solid #f0f0f0;
+}
+
+.note-footer small {
+    font-size: 11px;
+    color: #aaa;
+}
+
+.note-actions {
+    display: flex;
+    gap: 6px;
+}
+
+/* FORMS */
+input, textarea, select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 0.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border 0.2s;
+    background: #fff;
+    resize: vertical;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #4a90e2;
+}
+
+button {
+    padding: 9px 14px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #357abd;
+}
+
+/* TAGS */
+.tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag-btn {
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 0.5px solid #ddd;
+    background: none;
+    color: #555;
+    font-size: 12px;
+    cursor: pointer;
+    width: auto;
+    transition: all 0.15s;
+}
+
+.tag-btn:hover {
+    border-color: #4a90e2;
+    color: #4a90e2;
+}
+
+.tag-btn.active {
+    background: #4a90e2;
+    color: white;
+    border-color: #4a90e2;
+}
+
+.tag-badge {
+    display: inline-block;
+    background: #eef4fd;
+    color: #4a90e2;
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 11px;
+    align-self: flex-start;
+}
+
+/* EDIT MODE */
+.edit-btn {
+    background: none;
+    border: 0.5px solid #4a90e2;
+    color: #4a90e2;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    width: auto;
+}
+
+.edit-btn:hover {
+    background: #4a90e2;
+    color: white;
+}
+
+.cancel-btn {
+    background: none;
+    border: 0.5px solid #aaa;
+    color: #aaa;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    width: auto;
+}
+
+.cancel-btn:hover {
+    background: #aaa;
+    color: white;
+}
+
+.delete-btn {
+    background: none;
+    border: 0.5px solid #e74c3c;
+    color: #e74c3c;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    width: auto;
+    float: none;
+}
+
+.delete-btn:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+/* MESSAGES */
+.error {
+    color: #e74c3c;
+    background: #fdecea;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.success {
+    color: #27ae60;
+    background: #eafaf1;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+/* LOGIN / REGISTER PAGES */
+.auth-container {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    max-width: 420px;
+    margin: 80px auto;
+    border: 0.5px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.auth-container h2 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: #fff;
+    border-radius: 12px;
+    border: 0.5px solid #e0e0e0;
+    padding: 24px;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #aaa;
+    width: auto;
+    padding: 0;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: #333;
+    background: none;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 8px;
+}
+
+.save-btn {
+    flex: 1;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 9px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.save-btn:hover {
+    background: #357abd;
+}
+
+.modal-footer .cancel-btn {
+    flex: 1;
+    padding: 9px;
+}
