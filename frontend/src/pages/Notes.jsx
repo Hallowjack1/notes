@@ -50,6 +50,15 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     fetchNotes();
   };
 
+  const handlePin = async (id, currentPinned) => {
+  await fetch("http://localhost/notes/backend/api/pin.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, user_id: userId, pinned: currentPinned ? 0 : 1 }),
+    });
+    fetchNotes();
+  };
+
   const handleEditSave = async (id, editTitle, editBody, editTag) => {
     const res = await fetch("http://localhost/notes/backend/api/update.php", {
       method: "POST",
@@ -141,8 +150,17 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
           ) : (
             <div className="notes-grid">
               {filteredNotes.map((note) => (
-                <div className="note-card" key={note.id}>
-                  {note.tag && <span className="tag-badge">{note.tag}</span>}
+                <div className="note-card" key={note.id} style={{ border: note.pinned == 1 ? "0.5px solid #4a90e2" : "" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    {note.tag && <span className="tag-badge">{note.tag}</span>}
+                    <button
+                      className="pin-btn"
+                      onClick={() => handlePin(note.id, note.pinned)}
+                      title={note.pinned ? "Unpin" : "Pin"}
+                    >
+                      {note.pinned == 1 ? "📌" : "📍"}
+                    </button>
+                  </div>
                   <h4>{note.title}</h4>
                   <p>{note.body}</p>
                   <div className="note-footer">

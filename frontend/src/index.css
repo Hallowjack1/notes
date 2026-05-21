@@ -430,3 +430,13 @@ button:hover {
 .toggle-track.on .toggle-thumb {
     left: 18px;
 }
+
+.pin-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    width: auto;
+    margin-left: auto;
+}
