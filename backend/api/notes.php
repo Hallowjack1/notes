@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $stmt = $pdo->prepare("INSERT INTO notes (user_id, title, body, tag, folder_id, reminder_at) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO notes (user_id, title, body, tag, folder_id, reminder_at) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->execute([$user_id, $title, $body, $tag ?: null, $folder_id ?: null, $reminder_at ?: null]);
     echo json_encode(['success' => true]);
 }

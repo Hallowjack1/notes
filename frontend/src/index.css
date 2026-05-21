@@ -37,6 +37,8 @@ body {
     background-color: var(--bg-page);
     color: var(--text-primary);
     min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     padding: 24px;
     transition: background 0.2s, color 0.2s;
 }
@@ -105,6 +107,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 14px;
+    align-content: start;
 }
 
 .note-card {
@@ -578,4 +581,96 @@ button:hover {
     background: #4a90e2;
     color: white;
     border-color: #4a90e2;
+}
+
+.pagination {
+    position: sticky;
+    bottom: 0;
+    margin-top: auto;
+    background: var(--bg-page);
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-top: 0.5px solid var(--border);
+}
+
+.page-btn {
+    background: none;
+    border: 0.5px solid var(--border);
+    color: var(--text-secondary);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    width: auto;
+    transition: all 0.15s;
+}
+
+.page-btn:hover:not(:disabled) {
+    border-color: #4a90e2;
+    color: #4a90e2;
+}
+
+.page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 4px;
+}
+
+.page-num {
+    background: none;
+    border: 0.5px solid var(--border);
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.15s;
+}
+
+.page-num:hover {
+    border-color: #4a90e2;
+    color: #4a90e2;
+}
+
+.page-num.active {
+    background: #4a90e2;
+    color: white;
+    border-color: #4a90e2;
+}
+
+.page-ellipsis {
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+}
+
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: calc(100vh - 48px);
+    overflow-y: auto;
+}
+
+.pagination {
+    position: sticky;
+    bottom: 0;
+    background: var(--bg-page);
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-top: 0.5px solid var(--border);
 }

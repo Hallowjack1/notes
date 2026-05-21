@@ -24,6 +24,8 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   const [folders, setFolders] = useState([]);
   const [activeFolderId, setActiveFolderId] = useState(null);
   const [activeCategory, setActiveCategory] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const NOTES_PER_PAGE = 12;
 
   const fetchNotes = async () => {
     const res = await fetch(`http://localhost/notes/backend/api/notes.php?user_id=${userId}`);
@@ -43,6 +45,10 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     }, []);
 
     const firedIds = useReminders(notes);
+
+    useEffect(() => {
+      setCurrentPage(1);
+    }, [search, activeCategory, activeFolderId]);
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -162,6 +168,12 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     return matchesSearch && matchesFolder && matchesCategory;
   });
 
+  const totalPages = Math.ceil(filteredNotes.length / NOTES_PER_PAGE);
+    const paginatedNotes = filteredNotes.slice(
+      (currentPage - 1) * NOTES_PER_PAGE,
+      currentPage * NOTES_PER_PAGE
+    );
+
   const handleSelectCategory = (category) => {
     setActiveCategory(category);
     setActiveFolderId(null);
@@ -280,53 +292,122 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
 
           {filteredNotes.length === 0 ? (
             <p style={{ fontSize: "14px", color: "var(--text-muted)" }}>
-              {search || filterTag ? "No notes match your filter." : "No notes yet. Add one on the left!"}
+              {search || activeCategory !== "all" ? "No notes match your filter." : "No notes yet. Add one on the left!"}
             </p>
           ) : (
-            <div className="notes-grid">
-              {filteredNotes.map((note) => (
-                <div className="note-card" key={note.id} style={{ border: note.pinned == 1 ? "0.5px solid #4a90e2" : "" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    {note.tag && <span className="tag-badge">{note.tag}</span>}
-                    <button className="pin-btn" onClick={() => handlePin(note.id, note.pinned)} title={note.pinned ? "Unpin" : "Pin"}>
-                      {note.pinned == 1 ? "📌" : "📍"}
-                    </button>
-                  </div>
-                  <h4>{note.title}</h4>
-                  <p>{note.body}</p>
-                  {note.folder_id && (
-                    <small style={{ color: "var(--text-muted)" }}>
-                      📁 {folders.find(f => f.id == note.folder_id)?.name}
-                    </small>
-                  )}
-
-                  {note.reminder_at && (
-                    <small style={{
-                      fontSize: "11px",
-                      color: firedIds.has(note.id) ? "#27ae60" : "#4a90e2",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px"
-                    }}>
-                      {firedIds.has(note.id) ? "✅ Reminder done" : `🔔 ${new Date(note.reminder_at).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}`}
-                    </small>
-                  )}
-
-                  <div className="note-footer">
-                    <small>{formatDate(note.created_at)}</small>
-                    <div className="note-actions">
-                      <button className="edit-btn" onClick={() => setEditingNote(note)}>Edit</button>
-                      <button className="delete-btn" onClick={() => handleDelete(note.id)}>Delete</button>
+            <>
+              <div className="notes-grid">
+                {paginatedNotes.map((note) => (
+                  <div className="note-card" key={note.id} style={{ border: note.pinned == 1 ? "0.5px solid #4a90e2" : "" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      {note.tag && <span className="tag-badge">{note.tag}</span>}
+                      <button className="pin-btn" onClick={() => handlePin(note.id, note.pinned)} title={note.pinned ? "Unpin" : "Pin"}>
+                        {note.pinned == 1 ? "📌" : "📍"}
+                      </button>
+                    </div>
+                    <h4>{note.title}</h4>
+                    <p>{note.body}</p>
+                    {note.folder_id && (
+                      <small style={{ color: "var(--text-muted)" }}>
+                        📁 {folders.find(f => f.id == note.folder_id)?.name}
+                      </small>
+                    )}
+                    {note.reminder_at && (
+                      <small style={{
+                        fontSize: "11px",
+                        color: firedIds.has(note.id) ? "#27ae60" : "#4a90e2",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px"
+                      }}>
+                        {firedIds.has(note.id) ? "✅ Reminder done" : `🔔 ${new Date(note.reminder_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}`}
+                      </small>
+                    )}
+                    <div className="note-footer">
+                      <small>{formatDate(note.created_at)}</small>
+                      <div className="note-actions">
+                        <button className="edit-btn" onClick={() => setEditingNote(note)}>Edit</button>
+                        <button className="delete-btn" onClick={() => handleDelete(note.id)}>Delete</button>
+                      </div>
                     </div>
                   </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="pagination">
+                  <button
+                    className="page-btn"
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                    title="First page"
+                  >
+                    «
+                  </button>
+
+                  <button
+                    className="page-btn"
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                    disabled={currentPage === 1}
+                  >
+                    ← Prev
+                  </button>
+
+                  <div className="page-numbers">
+                    {(() => {
+                      const pages = [];
+                      const delta = 2;
+                      const left = currentPage - delta;
+                      const right = currentPage + delta;
+
+                      let lastPage = null;
+
+                      for (let i = 1; i <= totalPages; i++) {
+                        if (i === 1 || i === totalPages || (i >= left && i <= right)) {
+                          if (lastPage && i - lastPage > 1) {
+                            pages.push(<span key={`ellipsis-${i}`} className="page-ellipsis">...</span>);
+                          }
+                          pages.push(
+                            <button
+                              key={i}
+                              className={`page-num ${currentPage === i ? "active" : ""}`}
+                              onClick={() => setCurrentPage(i)}
+                            >
+                              {i}
+                            </button>
+                          );
+                          lastPage = i;
+                        }
+                      }
+                      return pages;
+                    })()}
+                  </div>
+
+                  <button
+                    className="page-btn"
+                    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next →
+                  </button>
+
+                  <button
+                    className="page-btn"
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                    title="Last page"
+                  >
+                    »
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>
