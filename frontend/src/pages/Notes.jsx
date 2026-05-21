@@ -5,6 +5,7 @@ import ChangePasswordModal from "../components/ChangePasswordModal";
 import DeleteAccountModal from "../components/DeleteAccountModal";
 import TrashModal from "../components/TrashModal";
 import FolderSidebar from "../components/FolderSidebar";
+import useReminders from "../hooks/useReminders";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
@@ -40,6 +41,8 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
       fetchNotes();
       fetchFolders();
     }, []);
+
+    const firedIds = useReminders(notes);
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -78,7 +81,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     fetchNotes();
   };
 
-  const handleEditSave = async (id, editTitle, editBody, editTag, editFolderId) => {
+  const handleEditSave = async (id, editTitle, editBody, editTag, editFolderId, editReminder) => {
     const res = await fetch("http://localhost/notes/backend/api/update.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -89,6 +92,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
         body: editBody,
         tag: editTag,
         folder_id: editFolderId,
+        reminder_at: editReminder || null,
       }),
     });
     const data = await res.json();
@@ -145,20 +149,18 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     });
   };
 
-const filteredNotes = notes.filter((note) => {
-  const matchesSearch =
-    note.title.toLowerCase().includes(search.toLowerCase()) ||
-    note.body.toLowerCase().includes(search.toLowerCase());
-
-  const matchesFolder = activeFolderId === null || note.folder_id == activeFolderId;
-
-  const matchesCategory =
-    activeCategory === "all" ||
-    (activeCategory === "pinned" && note.pinned == 1) ||
-    note.tag === activeCategory;
-
-  return matchesSearch && matchesFolder && matchesCategory;
-});
+  const filteredNotes = notes.filter((note) => {
+    const matchesSearch =
+      note.title.toLowerCase().includes(search.toLowerCase()) ||
+      note.body.toLowerCase().includes(search.toLowerCase());
+    const matchesFolder = activeFolderId === null || note.folder_id == activeFolderId;
+    const matchesCategory =
+      activeCategory === "all" ||
+      (activeCategory === "pinned" && note.pinned == 1) ||
+      (activeCategory === "reminders" && note.reminder_at && new Date(note.reminder_at) > new Date()) ||
+      note.tag === activeCategory;
+    return matchesSearch && matchesFolder && matchesCategory;
+  });
 
   const handleSelectCategory = (category) => {
     setActiveCategory(category);
@@ -297,6 +299,24 @@ const filteredNotes = notes.filter((note) => {
                       📁 {folders.find(f => f.id == note.folder_id)?.name}
                     </small>
                   )}
+
+                  {note.reminder_at && (
+                    <small style={{
+                      fontSize: "11px",
+                      color: firedIds.has(note.id) ? "#27ae60" : "#4a90e2",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px"
+                    }}>
+                      {firedIds.has(note.id) ? "✅ Reminder done" : `🔔 ${new Date(note.reminder_at).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}`}
+                    </small>
+                  )}
+
                   <div className="note-footer">
                     <small>{formatDate(note.created_at)}</small>
                     <div className="note-actions">
