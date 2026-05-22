@@ -7,6 +7,7 @@ import TrashModal from "../components/TrashModal";
 import FolderSidebar from "../components/FolderSidebar";
 import useReminders from "../hooks/useReminders";
 import ExportModal from "../components/ExportModal";
+import RichEditor from "../components/RichEditor";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
@@ -239,17 +240,24 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
           {error && <p className="error">{error}</p>}
           <form onSubmit={handleAdd} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-            <textarea
-              placeholder="Write your note..."
-              rows="5"
+            <RichEditor
               value={body}
-              onChange={(e) => {
-                if (e.target.value.length <= 500) setBody(e.target.value);
+              onChange={(val) => {
+                if (val.replace(/<[^>]*>/g, "").length <= 500) setBody(val);
               }}
-              required
+              placeholder="Write your note..."
+              rows={5}
             />
-            <div style={{ fontSize: "12px", textAlign: "right", color: body.length > 450 ? "#e74c3c" : "var(--text-muted)" }}>
-              {body.length}/500
+            <div style={{ 
+                fontSize: "12px", 
+                textAlign: "right",
+                paddingRight: "8px", 
+                color: body.replace(/<[^>]*>/g, "").length > 450 ? "#e74c3c" : "var(--text-muted)", 
+                position: "relative",
+                zIndex: 9999,
+                marginTop: "4px"
+            }}>
+              {body.replace(/<[^>]*>/g, "").length}/500
             </div>
             <select value={tag} onChange={(e) => setTag(e.target.value)}>
               <option value="">No tag</option>
@@ -318,7 +326,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
                       </button>
                     </div>
                     <h4>{note.title}</h4>
-                    <p>{note.body}</p>
+                    <p dangerouslySetInnerHTML={{ __html: note.body }} />
                     {note.folder_id && (
                       <small style={{ color: "var(--text-muted)" }}>
                         📁 {folders.find(f => f.id == note.folder_id)?.name}

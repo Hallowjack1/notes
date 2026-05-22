@@ -1,4 +1,5 @@
 import { useState } from "react";
+import RichEditor from "./RichEditor";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
@@ -36,12 +37,12 @@ function EditModal({ note, folders, onSave, onClose }) {
             onChange={(e) => setEditTitle(e.target.value)}
             placeholder="Title"
           />
-          <textarea
-            rows="8"
-            value={editBody}
-            onChange={(e) => setEditBody(e.target.value)}
-            placeholder="Write your note..."
-          />
+            <RichEditor
+              value={editBody}
+              onChange={setEditBody}
+              placeholder="Write your note..."
+              rows={8}
+            />
           <select value={editTag} onChange={(e) => setEditTag(e.target.value)}>
             <option value="">No tag</option>
             {TAGS.map((t) => <option key={t} value={t}>{t}</option>)}
