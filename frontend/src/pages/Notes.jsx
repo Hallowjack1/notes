@@ -11,6 +11,9 @@ import RichEditor from "../components/RichEditor";
 import ShareModal from "../components/ShareModal";
 import ImageUpload from "../components/ImageUpload";
 
+const API = import.meta.env.VITE_API_URL;
+const BASE = API.replace('/api', '');
+
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
 function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
@@ -35,13 +38,13 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   const [image, setImage] = useState(null);
 
   const fetchNotes = async () => {
-    const res = await fetch(`http://localhost/notes/backend/api/notes.php?user_id=${userId}`);
+    const res = await fetch(`${API}/notes.php?user_id=${userId}`);
     const data = await res.json();
     setNotes(data);
   };
 
   const fetchFolders = async () => {
-    const res = await fetch(`http://localhost/notes/backend/api/folders.php?user_id=${userId}`);
+    const res = await fetch(`${API}/folders.php?user_id=${userId}`);
     const data = await res.json();
     setFolders(data);
   };
@@ -60,7 +63,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     const handleAdd = async (e) => {
       e.preventDefault();
       setError("");
-      const res = await fetch("http://localhost/notes/backend/api/notes.php", {
+      const res = await fetch(`${API}/notes.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: userId, title, body, tag, folder_id: activeFolderId, image }),
@@ -78,7 +81,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     };
 
   const handleDelete = async (id) => {
-    await fetch("http://localhost/notes/backend/api/delete.php", {
+    await fetch(`${API}/delete.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, user_id: userId }),
@@ -87,7 +90,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   };
 
   const handlePin = async (id, currentPinned) => {
-  await fetch("http://localhost/notes/backend/api/pin.php", {
+  await fetch(`${API}/pin.php`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id, user_id: userId, pinned: currentPinned ? 0 : 1 }),
@@ -96,7 +99,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   };
 
   const handleEditSave = async (id, editTitle, editBody, editTag, editFolderId, editReminder, editImage) => {
-    const res = await fetch("http://localhost/notes/backend/api/update.php", {
+    const res = await fetch(`${API}/update.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -118,7 +121,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   };
 
   const handleCreateFolder = async (name) => {
-    await fetch("http://localhost/notes/backend/api/folders.php", {
+    await fetch(`${API}/folders.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "create", user_id: userId, name }),
@@ -127,7 +130,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   };
 
   const handleRenameFolder = async (id, name) => {
-    await fetch("http://localhost/notes/backend/api/folders.php", {
+    await fetch(`${API}/folders.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "rename", user_id: userId, id, name }),
@@ -136,7 +139,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   };
 
   const handleDeleteFolder = async (id) => {
-    await fetch("http://localhost/notes/backend/api/folders.php", {
+    await fetch(`${API}/folders.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "delete", user_id: userId, id }),
@@ -147,7 +150,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   };
 
   const handleMoveNote = async (noteId, folderId) => {
-    await fetch("http://localhost/notes/backend/api/move-note.php", {
+    await fetch(`${API}/move-note.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: noteId, user_id: userId, folder_id: folderId }),
@@ -364,7 +367,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
                     
                     {note.image && (
                       <img
-                        src={`http://localhost/notes/backend/uploads/${note.image}`}
+                        src={`${BASE}/uploads/${note.image}`}
                         alt="attachment"
                         className="note-image"
                       />

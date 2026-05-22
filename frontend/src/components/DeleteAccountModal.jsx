@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const API = import.meta.env.VITE_API_URL;
+
 function DeleteAccountModal({ userId, onDeleted, onClose }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -8,7 +10,7 @@ function DeleteAccountModal({ userId, onDeleted, onClose }) {
   const handleDelete = async () => {
     setError("");
 
-    const res = await fetch("http://localhost/notes/backend/api/delete-account.php", {
+    const res = await fetch(`${API}/delete-account.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId, password }),

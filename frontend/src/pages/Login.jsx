@@ -1,6 +1,8 @@
 import { useState } from "react";
 import DarkToggle from "../components/DarkToggle";
 
+const API = import.meta.env.VITE_API_URL;
+
 function Login({ onLogin, goToRegister, isDark, onToggleDark }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -10,7 +12,7 @@ function Login({ onLogin, goToRegister, isDark, onToggleDark }) {
     e.preventDefault();
     setError("");
 
-    const res = await fetch("http://localhost/notes/backend/api/login.php", {
+    const res = await fetch(`${API}/login.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),

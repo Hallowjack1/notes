@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const API = import.meta.env.VITE_API_URL;
+
 function ChangePasswordModal({ userId, onClose }) {
   const [current, setCurrent] = useState("");
   const [newPass, setNewPass] = useState("");
@@ -11,7 +13,7 @@ function ChangePasswordModal({ userId, onClose }) {
     setError("");
     setSuccess("");
 
-    const res = await fetch("http://localhost/notes/backend/api/change-password.php", {
+    const res = await fetch(`${API}/change-password.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 
+const API = import.meta.env.VITE_API_URL;
+
 function SharedNote({ token }) {
   const [note, setNote] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchNote = async () => {
-      const res = await fetch(`http://localhost/notes/backend/api/view.php?token=${token}`);
+      const res = await fetch(`${API}/view.php?token=${token}`);
       const data = await res.json();
       if (data.success) {
         setNote(data.note);

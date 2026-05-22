@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 
+const API = import.meta.env.VITE_API_URL;
+
 function TrashModal({ userId, onClose, onRestored }) {
   const [notes, setNotes] = useState([]);
   const [expandedId, setExpandedId] = useState(null);
 
   const fetchTrash = async () => {
-    const res = await fetch(`http://localhost/notes/backend/api/trash.php?user_id=${userId}`);
+    const res = await fetch(`${API}/trash.php?user_id=${userId}`);
     const data = await res.json();
     setNotes(data);
   };
@@ -15,7 +17,7 @@ function TrashModal({ userId, onClose, onRestored }) {
   }, []);
 
   const handleAction = async (id, action) => {
-    await fetch("http://localhost/notes/backend/api/trash.php", {
+    await fetch(`${API}/trash.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, user_id: userId, action }),

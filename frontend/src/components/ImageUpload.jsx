@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+const API = import.meta.env.VITE_API_URL;
+const BASE = API.replace('/api', '');
+
 function ImageUpload({ currentImage, onUploaded, onRemove }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -36,7 +39,7 @@ function ImageUpload({ currentImage, onUploaded, onRemove }) {
       {currentImage ? (
         <div className="image-preview">
           <img
-            src={`http://localhost/notes/backend/uploads/${currentImage}`}
+            src={`${BASE}/uploads/${currentImage}`}
             alt="Note attachment"
           />
           <button className="delete-btn" onClick={onRemove} style={{ width: "auto", marginTop: "6px" }}>

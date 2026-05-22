@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const API = import.meta.env.VITE_API_URL;
+
 function ShareModal({ note, userId, onClose }) {
   const [token, setToken] = useState(note.share_token || null);
   const [copied, setCopied] = useState(false);
@@ -11,7 +13,7 @@ function ShareModal({ note, userId, onClose }) {
   };
 
   const handleGenerate = async () => {
-    const res = await fetch("http://localhost/notes/backend/api/share.php", {
+    const res = await fetch(`${API}/share.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: note.id, user_id: userId, action: "generate" }),
@@ -21,7 +23,7 @@ function ShareModal({ note, userId, onClose }) {
   };
 
   const handleRevoke = async () => {
-    await fetch("http://localhost/notes/backend/api/share.php", {
+    await fetch(`${API}/share.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: note.id, user_id: userId, action: "revoke" }),
