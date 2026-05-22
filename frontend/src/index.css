@@ -152,8 +152,8 @@ body {
 
 .note-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 6px;
     margin-top: auto;
     padding-top: 10px;
     border-top: 0.5px solid var(--border);
@@ -167,6 +167,7 @@ body {
 .note-actions {
     display: flex;
     gap: 6px;
+    flex-wrap: wrap;
 }
 
 input, textarea, select {
@@ -912,4 +913,47 @@ button:hover {
     gap: 8px;
     align-items: center;
     margin-top: "8px";
+}
+
+.note-image {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    max-height: 150px;
+    margin-top: 6px;
+}
+
+.image-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.image-upload-label {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 0.5px dashed var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.15s;
+}
+
+.image-upload-label:hover {
+    border-color: #4a90e2;
+    color: #4a90e2;
+}
+
+.image-preview {
+    display: flex;
+    flex-direction: column;
+}
+
+.image-preview img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    max-height: 150px;
 }

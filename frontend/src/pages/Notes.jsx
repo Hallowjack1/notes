@@ -9,6 +9,7 @@ import useReminders from "../hooks/useReminders";
 import ExportModal from "../components/ExportModal";
 import RichEditor from "../components/RichEditor";
 import ShareModal from "../components/ShareModal";
+import ImageUpload from "../components/ImageUpload";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
@@ -31,6 +32,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   const NOTES_PER_PAGE = 12;
   const [showExport, setShowExport] = useState(false);
   const [sharingNote, setSharingNote] = useState(null);
+  const [image, setImage] = useState(null);
 
   const fetchNotes = async () => {
     const res = await fetch(`http://localhost/notes/backend/api/notes.php?user_id=${userId}`);
@@ -55,24 +57,25 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
       setCurrentPage(1);
     }, [search, activeCategory, activeFolderId]);
 
-  const handleAdd = async (e) => {
-    e.preventDefault();
-    setError("");
-    const res = await fetch("http://localhost/notes/backend/api/notes.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id: userId, title, body, tag, folder_id: activeFolderId }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      setTitle("");
-      setBody("");
-      setTag("");
-      fetchNotes();
-    } else {
-      setError(data.message);
-    }
-  };
+    const handleAdd = async (e) => {
+      e.preventDefault();
+      setError("");
+      const res = await fetch("http://localhost/notes/backend/api/notes.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId, title, body, tag, folder_id: activeFolderId, image }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTitle("");
+        setBody("");
+        setTag("");
+        setImage(null);
+        fetchNotes();
+      } else {
+        setError(data.message);
+      }
+    };
 
   const handleDelete = async (id) => {
     await fetch("http://localhost/notes/backend/api/delete.php", {
@@ -92,7 +95,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
     fetchNotes();
   };
 
-  const handleEditSave = async (id, editTitle, editBody, editTag, editFolderId, editReminder) => {
+  const handleEditSave = async (id, editTitle, editBody, editTag, editFolderId, editReminder, editImage) => {
     const res = await fetch("http://localhost/notes/backend/api/update.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -104,6 +107,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
         tag: editTag,
         folder_id: editFolderId,
         reminder_at: editReminder || null,
+        image: editImage,
       }),
     });
     const data = await res.json();
@@ -294,6 +298,12 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
             onRenameFolder={handleRenameFolder}
             onDeleteFolder={handleDeleteFolder}
           />
+
+          <ImageUpload
+            currentImage={image}
+            onUploaded={(filename) => setImage(filename)}
+            onRemove={() => setImage(null)}
+          />
         </div>
 
         {/* RIGHT PANEL */}
@@ -338,6 +348,15 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
                     </div>
                     <h4>{note.title}</h4>
                     <p dangerouslySetInnerHTML={{ __html: note.body }} />
+                    
+                    {note.image && (
+                      <img
+                        src={`http://localhost/notes/backend/uploads/${note.image}`}
+                        alt="attachment"
+                        className="note-image"
+                      />
+                    )}
+                    
                     {note.folder_id && (
                       <small style={{ color: "var(--text-muted)" }}>
                         📁 {folders.find(f => f.id == note.folder_id)?.name}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import RichEditor from "./RichEditor";
+import ImageUpload from "./ImageUpload";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
@@ -11,10 +12,11 @@ function EditModal({ note, folders, onSave, onClose }) {
   const [editReminder, setEditReminder] = useState(
     note.reminder_at ? note.reminder_at.slice(0, 16) : ""
   );
+  const [editImage, setEditImage] = useState(note.image || null);
 
   const handleSave = () => {
     if (editTitle.trim() === "" || editBody.trim() === "") return;
-    onSave(note.id, editTitle, editBody, editTag, editFolderId, editReminder);
+    onSave(note.id, editTitle, editBody, editTag, editFolderId, editReminder, editImage);
   };
 
   const handleOverlayClick = (e) => {
@@ -51,6 +53,12 @@ function EditModal({ note, folders, onSave, onClose }) {
             <option value="">No folder</option>
             {folders.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
           </select>
+
+          <ImageUpload
+            currentImage={editImage}
+            onUploaded={(filename) => setEditImage(filename)}
+            onRemove={() => setEditImage(null)}
+          />
 
           <div>
             <label style={{ fontSize: "12px", color: "var(--text-muted)", display: "block", marginBottom: "6px" }}>
