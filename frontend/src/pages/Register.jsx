@@ -28,10 +28,13 @@ function Register({ onRegistered, goToLogin, isDark, onToggleDark }) {
     }
   };
 
-  return (
-    <div className="auth-container">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2>Create Account</h2>
+    return (
+      <div className="auth-container">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="auth-brand">
+            <div className="auth-brand-icon">✎</div>
+            <h2>Create Account</h2>
+          </div>
         <DarkToggle isDark={isDark} onToggle={onToggleDark} />
       </div>
       {error && <p className="error">{error}</p>}

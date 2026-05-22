@@ -64,7 +64,7 @@ function TrashModal({ userId, onClose, onRestored }) {
                   className="trash-card"
                   onClick={() => toggleExpand(note.id)}
                 >
-                  {note.tag && <span className="tag-badge">{note.tag}</span>}
+                  {note.tag && <span className={`tag-badge tag-${note.tag}`}>{note.tag}</span>}
 
                   <p className="trash-card-title">{note.title}</p>
 

@@ -25,12 +25,15 @@ function Login({ onLogin, goToRegister, isDark, onToggleDark }) {
     }
   };
 
-  return (
-    <div className="auth-container">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2>Login</h2>
-        <DarkToggle isDark={isDark} onToggle={onToggleDark} />
-      </div>        
+    return (
+      <div className="auth-container">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="auth-brand">
+            <div className="auth-brand-icon">✎</div>
+            <h2>Login</h2>
+          </div>
+          <DarkToggle isDark={isDark} onToggle={onToggleDark} />
+        </div>   
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <input placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />

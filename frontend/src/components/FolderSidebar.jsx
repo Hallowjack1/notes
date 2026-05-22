@@ -39,13 +39,22 @@ function FolderSidebar({
     return acc;
   }, {});
 
+  const reminderCount = notes.filter((n) => n.reminder_at && new Date(n.reminder_at) > new Date()).length;
+    {reminderCount > 0 && (
+      <div
+        className={`folder-item ${activeCategory === "reminders" ? "active" : ""}`}
+        onClick={() => onSelectCategory("reminders")}
+      >
+        <span>🔔 Reminders</span>
+        <span className="folder-count">{reminderCount}</span>
+      </div>
+    )}
+
   return (
     <div className="folder-sidebar">
 
       {/* CATEGORIES */}
-      <div className="folder-header" style={{ marginTop: "4px" }}>
-        <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-primary)" }}>Categories</span>
-      </div>
+      <div className="sidebar-section-label" style={{ marginTop: "4px", marginBottom: "6px" }}>Categories</div>
 
       <div
         className={`folder-item ${activeCategory === "all" ? "active" : ""}`}
@@ -80,7 +89,7 @@ function FolderSidebar({
 
       {/* FOLDERS */}
       <div className="folder-header">
-        <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-primary)" }}>Folders</span>
+        <span className="sidebar-section-label">Folders</span>
         <button className="folder-add-btn" onClick={() => setShowInput(!showInput)} title="New folder">+</button>
       </div>
 

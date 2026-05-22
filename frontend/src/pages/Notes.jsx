@@ -251,7 +251,12 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
       <div className="app-layout">
         {/* LEFT PANEL */}
         <div className="left-panel">
-          <h3>New note</h3>
+        <div className="left-panel-top">
+          <div className="app-brand">
+            <div className="app-brand-icon">✎</div>
+            <span className="app-brand-name">Notepad</span>
+          </div>
+          <h3 style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)", marginBottom: "10px" }}>New note</h3>
           {error && <p className="error">{error}</p>}
           <form onSubmit={handleAdd} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
@@ -282,29 +287,34 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
               <option value="">No folder</option>
               {folders.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
             </select>
+
+            <ImageUpload
+              currentImage={image}
+              onUploaded={(filename) => setImage(filename)}
+              onRemove={() => setImage(null)}
+            />
+
             <button type="submit">Add Note</button>
           </form>
+          </div>
 
           <hr style={{ borderColor: "var(--border)" }} />
 
-          <FolderSidebar
-            folders={folders}
-            activeFolderId={activeFolderId}
-            activeCategory={activeCategory}
-            notes={notes}
-            onSelectFolder={handleSelectFolder}
-            onSelectCategory={handleSelectCategory}
-            onCreateFolder={handleCreateFolder}
-            onRenameFolder={handleRenameFolder}
-            onDeleteFolder={handleDeleteFolder}
-          />
-
-          <ImageUpload
-            currentImage={image}
-            onUploaded={(filename) => setImage(filename)}
-            onRemove={() => setImage(null)}
-          />
+          <div className="left-panel-bottom">
+            <FolderSidebar
+              folders={folders}
+              activeFolderId={activeFolderId}
+              activeCategory={activeCategory}
+              notes={notes}
+              onSelectFolder={handleSelectFolder}
+              onSelectCategory={handleSelectCategory}
+              onCreateFolder={handleCreateFolder}
+              onRenameFolder={handleRenameFolder}
+              onDeleteFolder={handleDeleteFolder}
+            />
+          </div>
         </div>
+        
 
         {/* RIGHT PANEL */}
         <div className="right-panel">
@@ -324,13 +334,17 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
               <a onClick={() => setShowChangePassword(true)}>Settings</a>
               <a onClick={() => setShowTrash(true)}>Trash</a>
               <a onClick={() => setShowExport(true)}>Export</a>
-              <a onClick={() => setShowDeleteAccount(true)} style={{ color: "#e74c3c" }}>Delete account</a>
+              <a onClick={() => setShowDeleteAccount(true)} className="danger">Delete account</a>
               <a onClick={onLogout}>Logout</a>
             </div>
           </div>
 
-          <input placeholder="Search notes..." value={search} onChange={(e) => setSearch(e.target.value)} />
-
+          <div className="search-wrapper">
+            <div className="search-input-wrap">
+              <i className="ti ti-search search-icon"></i>
+              <input placeholder="Search notes..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            </div>
+          </div>
           {filteredNotes.length === 0 ? (
             <p style={{ fontSize: "14px", color: "var(--text-muted)" }}>
               {search || activeCategory !== "all" ? "No notes match your filter." : "No notes yet. Add one on the left!"}
@@ -339,10 +353,9 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
             <>
               <div className="notes-grid">
                 {paginatedNotes.map((note) => (
-                  <div className="note-card" key={note.id} style={{ border: note.pinned == 1 ? "0.5px solid #4a90e2" : "" }}>
+                  <div className="note-card" key={note.id} className={`note-card ${note.pinned == 1 ? "is-pinned" : ""}`}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      {note.tag && <span className="tag-badge">{note.tag}</span>}
-                      <button className="pin-btn" onClick={() => handlePin(note.id, note.pinned)} title={note.pinned ? "Unpin" : "Pin"}>
+                        {note.tag && <span className={`tag-badge tag-${note.tag}`}>{note.tag}</span>}                      <button className="pin-btn" onClick={() => handlePin(note.id, note.pinned)} title={note.pinned ? "Unpin" : "Pin"}>
                         {note.pinned == 1 ? "📌" : "📍"}
                       </button>
                     </div>

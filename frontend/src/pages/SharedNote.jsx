@@ -39,7 +39,7 @@ function SharedNote({ token }) {
       <div className="shared-note-card">
         <div className="shared-note-header">
           <h1>{note.title}</h1>
-          {note.tag && <span className="tag-badge">{note.tag}</span>}
+          {note.tag && <span className={`tag-badge tag-${note.tag}`}>{note.tag}</span>}
           <small style={{ color: "var(--text-muted)", fontSize: "12px" }}>
             {new Date(note.created_at).toLocaleDateString("en-US", {
               month: "long", day: "numeric", year: "numeric"
