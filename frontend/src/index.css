@@ -841,6 +841,10 @@ button:hover {
     fill: #4a90e2 !important;
 }
 
+.rich-editor .ql-toolbar .ql-picker-options {
+    z-index: 100 !important;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
     width: 4px;
@@ -857,4 +861,55 @@ button:hover {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
+}
+
+.shared-note-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+    background: var(--bg-page);
+}
+
+.shared-note-card {
+    background: var(--bg-panel);
+    border-radius: 12px;
+    border: 0.5px solid var(--border);
+    padding: 32px;
+    width: 100%;
+    max-width: 680px;
+    height: fit-content;
+}
+
+.shared-note-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 0.5px solid var(--border);
+}
+
+.shared-note-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.shared-note-body {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.shared-note-body ul,
+.shared-note-body ol {
+    padding-left: 20px;
+}
+
+.share-link-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: "8px";
 }

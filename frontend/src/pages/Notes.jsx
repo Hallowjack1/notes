@@ -8,6 +8,7 @@ import FolderSidebar from "../components/FolderSidebar";
 import useReminders from "../hooks/useReminders";
 import ExportModal from "../components/ExportModal";
 import RichEditor from "../components/RichEditor";
+import ShareModal from "../components/ShareModal";
 
 const TAGS = ["Personal", "Work", "Ideas", "School", "Other"];
 
@@ -29,6 +30,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
   const [currentPage, setCurrentPage] = useState(1);
   const NOTES_PER_PAGE = 12;
   const [showExport, setShowExport] = useState(false);
+  const [sharingNote, setSharingNote] = useState(null);
 
   const fetchNotes = async () => {
     const res = await fetch(`http://localhost/notes/backend/api/notes.php?user_id=${userId}`);
@@ -232,6 +234,15 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
         onClose={() => setShowExport(false)}
       />
     )}
+
+    {/* Share modal */}
+    {sharingNote && (
+      <ShareModal
+        note={sharingNote}
+        userId={userId}
+        onClose={() => { setSharingNote(null); fetchNotes(); }}
+      />
+    )}
       
       <div className="app-layout">
         {/* LEFT PANEL */}
@@ -353,6 +364,7 @@ function Notes({ userId, username, onLogout, isDark, onToggleDark }) {
                       <div className="note-actions">
                         <button className="edit-btn" onClick={() => setEditingNote(note)}>Edit</button>
                         <button className="delete-btn" onClick={() => handleDelete(note.id)}>Delete</button>
+                        <button className="edit-btn" onClick={() => setSharingNote(note)}>Share</button>
                       </div>
                     </div>
                   </div>

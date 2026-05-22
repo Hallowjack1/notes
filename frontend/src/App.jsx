@@ -2,6 +2,7 @@ import { useState } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Notes from "./pages/Notes";
+import SharedNote from "./pages/SharedNote";
 import useDarkMode from "./hooks/useDarkMode";
 
 function App() {
@@ -9,6 +10,10 @@ function App() {
   const [userId, setUserId] = useState(null);
   const [username, setUsername] = useState("");
   const [isDark, setIsDark] = useDarkMode();
+
+  // Check if this is a shared note link
+  const params = new URLSearchParams(window.location.search);
+  const shareToken = params.get("share");
 
   const handleLogin = (id, name) => {
     setUserId(id);
@@ -21,6 +26,10 @@ function App() {
     setUsername("");
     setPage("login");
   };
+
+  if (shareToken) {
+    return <SharedNote token={shareToken} />;
+  }
 
   return (
     <>
