@@ -1,7 +1,7 @@
 <?php
-header('Access-Control-Allow-Origin: https://notes-psi-murex.vercel.app/');
-header('Access-Control-Allow-Headers: Content-Type');
+require 'cors.php';
 header('Content-Type: application/json');
+
 
 require '../db.php';
 

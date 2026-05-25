@@ -1,8 +1,8 @@
 <?php
-header('Access-Control-Allow-Origin: https://notes-psi-murex.vercel.app/');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Access-Control-Allow-Methods: POST');
+require 'cors.php';
 header('Content-Type: application/json');
+
+
 
 $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 $maxSize = 5 * 1024 * 1024; // 5MB

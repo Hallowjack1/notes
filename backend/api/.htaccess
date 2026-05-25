@@ -1,0 +1,7 @@
+Header always set Access-Control-Allow-Origin "https://notes-psi-murex.vercel.app"
+Header always set Access-Control-Allow-Headers "Content-Type"
+Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS"
+
+RewriteEngine On
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
