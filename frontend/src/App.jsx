@@ -1,3 +1,5 @@
+console.log("API URL:", import.meta.env.VITE_API_URL);
+
 import { useState } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
